@@ -1,0 +1,99 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class Main extends JFrame {
+    private Timer timer;
+    private JLabel timeLabel;
+    private JButton startButton, stopButton, resetButton;
+    private int seconds;
+
+    public Main() {
+        setTitle("Stopwatch");
+        setSize(300, 150);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        seconds = 0;
+        timeLabel = new JLabel("Time: 00:00:00");
+        startButton = new JButton("Start");
+        stopButton = new JButton("Stop");
+        resetButton = new JButton("Reset");
+
+        startButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                start();
+            }
+        });
+
+        stopButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                stop();
+            }
+        });
+
+        resetButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                reset();
+            }
+        });
+
+        setLayout(new FlowLayout());
+        add(timeLabel);
+        add(startButton);
+        add(stopButton);
+        add(resetButton);
+
+        timer = new Timer(1, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                seconds++;
+                updateTimeLabel();
+            }
+        });
+    }
+
+    private void start() {
+        timer.start();
+        startButton.setEnabled(false);
+        stopButton.setEnabled(true);
+        resetButton.setEnabled(true);
+    }
+
+    private void stop() {
+        timer.stop();
+        startButton.setEnabled(true);
+        stopButton.setEnabled(false);
+    }
+
+    private void reset() {
+        timer.stop();
+        seconds = 0;
+        updateTimeLabel();
+        startButton.setEnabled(true);
+        stopButton.setEnabled(false);
+        resetButton.setEnabled(false);
+    }
+
+    private void updateTimeLabel() {
+        int hours = seconds / 3600;
+        int minutes = (seconds % 3600) / 60;
+        int secs = seconds % 60;
+
+        String timeString = String.format("Time: %02d:%02d:%02d", hours, minutes, secs);
+        timeLabel.setText(timeString);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new Main().setVisible(true);
+            }
+        });
+    }
+}
